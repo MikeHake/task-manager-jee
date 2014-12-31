@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence" version="2.1">
+    <persistence-unit name="TaskManagerPersistenceUnit" transaction-type="JTA">
+        
+        <!-- To run in Jboss WildFly 8 uncomment this data source -->
+       <jta-data-source>java:jboss/datasources/ExampleDS</jta-data-source>
+        
+        
+        <!-- To run in Glasfish uncomment this data source -->
+       <!-- <jta-data-source>jdbc/sample</jta-data-source>  -->
+      
+        <exclude-unlisted-classes>false</exclude-unlisted-classes>
+        <properties>
+            <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
+            <property name="javax.persistence.sql-load-script-source" value="META-INF/seeddata.sql" />
+        </properties>
+    </persistence-unit>
+</persistence>
