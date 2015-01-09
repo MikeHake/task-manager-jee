@@ -1,3 +1,12 @@
 <jboss-web>
-    <security-domain>java:/jaas/other</security-domain>
+    <!-- 
+        See: http://www.mastertheboss.com/jboss-server/jboss-security/securing-as-7-applications-using-the-applicationrealm 
+        for explanation of what this means
+        
+        Note: the way the security-domain is specified changed between
+        WildFly versions 8.1.0 and 8.2.0. This drove me
+        crazy when I moved to 8.2.0 and it failed to deploy! Dohh!
+        See here: https://issues.jboss.org/browse/WFLY-4116
+     -->
+    <security-domain>other</security-domain>
 </jboss-web>

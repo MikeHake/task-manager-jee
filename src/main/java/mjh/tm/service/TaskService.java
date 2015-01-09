@@ -56,6 +56,7 @@ public class TaskService {
         return task;
     }
 
+    @RolesAllowed("USER")
     public Task getTask(String projectName, long taskId) throws ProjectNotFoundException, ForbiddenException {
         Task t = entityManager.find(Task.class, taskId);
         return t;
