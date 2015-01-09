@@ -4,7 +4,7 @@ This is a reference Java EE 7 application I created for the purpose of exploring
 best practices of providing 'enterprise' type services using Java EE 7.
 
 Below is a brief description of how to set up and run the application, and I have also written a more
-detailed article on my blog here: TODO: Insert link!!!
+detailed article on my blog here: http://mikehake.com/
 
 # What the application does
 
