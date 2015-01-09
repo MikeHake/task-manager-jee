@@ -4,9 +4,14 @@
 		  http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
 	version="3.0">
 
+    <!-- 
+        See: http://www.mastertheboss.com/jboss-server/jboss-security/securing-as-7-applications-using-the-applicationrealm 
+        for explanation of what this means
+     -->
 	<login-config>
 		<auth-method>BASIC</auth-method>
-		<realm-name>my-database-login</realm-name>
+		<realm-name>ApplicationRealm</realm-name>
 	</login-config>
+
 
 </web-app>
