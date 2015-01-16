@@ -1,5 +1,7 @@
 package mjh.tm.restapi.resource;
 
+import java.util.Set;
+
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
@@ -12,12 +14,11 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import mjh.tm.restapi.messagewriter.adapter.TaskCollectionAdapter;
-import mjh.tm.restapi.messagewriter.adapter.TaskJSONAdapter;
 import mjh.tm.service.ProjectService;
 import mjh.tm.service.TaskService;
 import mjh.tm.service.entity.Project;
@@ -47,8 +48,7 @@ public class ProjectTaskResource {
         String taskTitle = jsonObject.getString("title");
         String taskDescription = jsonObject.getString("description");
         Task task = taskController.createTask(projectName, taskTitle, taskDescription);
-        TaskJSONAdapter adapter = new TaskJSONAdapter(uriInfo, task);
-        return Response.created(uriInfo.getRequestUri()).entity(adapter).type(RESTConfiguration.OBJECT_JSON).build();
+        return Response.created(uriInfo.getRequestUri()).entity(task).type(RESTConfiguration.OBJECT_JSON).build();
     }
     
     @RolesAllowed("USER")
@@ -57,8 +57,10 @@ public class ProjectTaskResource {
     @Path("{projectName}/tasks/")
     public Response getAllProjectTasks(@Context UriInfo uriInfo,@PathParam("projectName") String projectName) throws ProjectNotFoundException, ForbiddenException {
         Project project = projectController.getProject(projectName);
-        TaskCollectionAdapter adapter = new TaskCollectionAdapter(uriInfo,projectName, project.getTasks());
-        return Response.ok(adapter, RESTConfiguration.OBJECT_JSON).build();
+        // Wrap projects in a GenericEntity to preserve Type information 
+        // so the proper MessageBodyWriter is selected.
+        GenericEntity<Set<Task>> entity = new GenericEntity<Set<Task>>(project.getTasks()){};
+        return Response.ok(entity, RESTConfiguration.OBJECT_JSON).build();
     }
     
     @RolesAllowed("USER")
@@ -67,7 +69,6 @@ public class ProjectTaskResource {
     @Path("{projectName}/tasks/{taskId}")
     public Response getProjectTask(@Context UriInfo uriInfo,@PathParam("projectName") String projectName, @PathParam("taskId") long taskId) throws ProjectNotFoundException, ForbiddenException {
         Task task = taskController.getTask(projectName,taskId);
-        TaskJSONAdapter adapter = new TaskJSONAdapter(uriInfo, task);
-        return Response.ok(adapter, RESTConfiguration.OBJECT_JSON).build();
+        return Response.ok(task, RESTConfiguration.OBJECT_JSON).build();
     }
 }
