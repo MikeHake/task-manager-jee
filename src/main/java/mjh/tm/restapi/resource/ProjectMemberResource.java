@@ -17,7 +17,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
-import mjh.tm.restapi.messagewriter.adapter.ProjectMemberCollectionJSONAdapter;
 import mjh.tm.service.ProjectService;
 import mjh.tm.service.entity.Project;
 import mjh.tm.service.exception.ForbiddenException;
@@ -62,8 +61,7 @@ public class ProjectMemberResource {
     @Path("{projectName}/members/")
     public Response getAllProjectMembers(@Context UriInfo uriInfo,@PathParam("projectName") String projectName) throws ProjectNotFoundException, ForbiddenException {
         Project project = projectController.getProject(projectName);
-        ProjectMemberCollectionJSONAdapter adapter = new ProjectMemberCollectionJSONAdapter(uriInfo, project);
-        return Response.ok(adapter, RESTConfiguration.OBJECT_JSON).build();
+        return Response.ok(project, RESTConfiguration.PROJECT_MEMBERS_JSON).build();
     }
     
     @RolesAllowed("ADMIN")

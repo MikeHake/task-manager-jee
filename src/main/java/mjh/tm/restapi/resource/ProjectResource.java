@@ -18,13 +18,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
-import mjh.tm.restapi.messagewriter.adapter.ProjectCollectionAdapter;
-import mjh.tm.restapi.messagewriter.adapter.ProjectJSONAdapter;
 import mjh.tm.service.ProjectService;
 import mjh.tm.service.TaskService;
 import mjh.tm.service.entity.Project;
@@ -57,13 +56,12 @@ public class ProjectResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createProject(@Context UriInfo uriInfo, JsonObject jsonObject) throws ProjectAlreadyExistsException, IllegalNameException{
+    public Response createProject(JsonObject jsonObject) throws ProjectAlreadyExistsException, IllegalNameException{
         String name = jsonObject.getString("name");
         String displayName = jsonObject.getString("displayName");
         String description = jsonObject.getString("description");
         Project project = projectController.createProject(name, displayName, description);
-        ProjectJSONAdapter adapter = new ProjectJSONAdapter(uriInfo,project);
-        return Response.created(uriInfo.getRequestUri()).entity(adapter).type(RESTConfiguration.OBJECT_JSON).build();
+        return Response.status(Status.CREATED).entity(project).type(RESTConfiguration.OBJECT_JSON).build();
     }
     
     /**
@@ -106,8 +104,10 @@ public class ProjectResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllProjects(@Context UriInfo uriInfo) {
         List<Project> projects = projectController.getAllProjects();
-        ProjectCollectionAdapter adapter = new ProjectCollectionAdapter(uriInfo, projects);
-        Response response = Response.ok(adapter, RESTConfiguration.OBJECT_JSON).build();
+        // Wrap projects in a GenericEntity to preserve Type information 
+        // so the proper MessageBodyWriter is selected.
+        GenericEntity<List<Project>> entity = new GenericEntity<List<Project>>(projects){};
+        Response response = Response.ok(entity, RESTConfiguration.OBJECT_JSON).build();
         return response;
     }
     
@@ -117,8 +117,7 @@ public class ProjectResource {
     @Path("{projectName}")
     public Response getProject(@Context UriInfo uriInfo, @PathParam("projectName") String projectName) throws ProjectNotFoundException, ForbiddenException {
         Project project = projectController.getProject(projectName);
-        ProjectJSONAdapter adapter = new ProjectJSONAdapter(uriInfo,project);
-        return Response.ok(adapter, RESTConfiguration.OBJECT_JSON).build();
+        return Response.ok(project, RESTConfiguration.OBJECT_JSON).build();
     }
     
 }

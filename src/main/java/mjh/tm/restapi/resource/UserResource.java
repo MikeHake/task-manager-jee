@@ -14,12 +14,11 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import mjh.tm.restapi.messagewriter.adapter.UserCollectionJSONAdapter;
-import mjh.tm.restapi.messagewriter.adapter.UserJSONAdapter;
 import mjh.tm.service.UserService;
 import mjh.tm.service.entity.User;
 import mjh.tm.service.exception.UserNotFoundException;
@@ -55,8 +54,10 @@ public class UserResource {
         logCallerInfo();
 
         List<User> users = userController.getAllUsers();
-        UserCollectionJSONAdapter wrapper = new UserCollectionJSONAdapter(uriInfo, users);
-        Response response = Response.ok(wrapper, RESTConfiguration.OBJECT_JSON).build();
+        // Wrap users in a GenericEntity to preserve Type information 
+        // so the proper MessageBodyWriter is selected.
+        GenericEntity<List<User>> entity = new GenericEntity<List<User>>(users){};
+        Response response = Response.ok(entity, RESTConfiguration.OBJECT_JSON).build();
         return response;
     }
 
@@ -66,7 +67,6 @@ public class UserResource {
     @Path("{username}")
     public Response getUser(@Context UriInfo uriInfo, @PathParam("username") String userName) throws UserNotFoundException {
         User user = userController.getUser(userName);
-        UserJSONAdapter wrapper = new UserJSONAdapter(uriInfo, user);
-        return Response.ok(wrapper, RESTConfiguration.OBJECT_JSON).build();
+        return Response.ok(user, RESTConfiguration.OBJECT_JSON).build();
     }
 }

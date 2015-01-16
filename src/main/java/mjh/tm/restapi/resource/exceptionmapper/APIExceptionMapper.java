@@ -5,7 +5,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
-import mjh.tm.restapi.messagewriter.adapter.ErrorJSONAdapter;
 import mjh.tm.restapi.resource.RESTConfiguration;
 import mjh.tm.service.exception.ForbiddenException;
 import mjh.tm.service.exception.IllegalNameException;
@@ -54,9 +53,7 @@ public class APIExceptionMapper implements ExceptionMapper<Exception>{
             System.err.println("APIExceptionMapper handling unknown exception type:"+e);
             statusCode = Response.Status.INTERNAL_SERVER_ERROR;
         }
-        // Wrap the exception in our adapter so we can create the appropriate JSON error
-        // block via our message body writer
-        ErrorJSONAdapter adapter = new ErrorJSONAdapter(e);
-        return Response.status(statusCode).entity(adapter).type(RESTConfiguration.OBJECT_JSON).build();
+       
+        return Response.status(statusCode).entity(e).type(RESTConfiguration.OBJECT_JSON).build();
     }
 }
