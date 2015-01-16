@@ -1,4 +1,4 @@
-package mjh.tm.restapi.resource.exceptionmapper;
+package mjh.tm.restapi.exceptionmapper;
 
 import javax.ejb.EJBAccessException;
 import javax.ws.rs.core.Response;

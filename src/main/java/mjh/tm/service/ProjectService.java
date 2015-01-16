@@ -57,23 +57,19 @@ public class ProjectService {
     }
 
     @RolesAllowed("ADMIN")
-    public Project createProject(String name, String displayName, String description) throws ProjectAlreadyExistsException, IllegalNameException {
+    public Project createProject(Project project) throws ProjectAlreadyExistsException, IllegalNameException {
         // see if project already exists
-        Project existing = entityManager.find(Project.class, name);
+        Project existing = entityManager.find(Project.class, project.getName());
         if (existing != null) {
-            throw new ProjectAlreadyExistsException("Can not create project " + name + " because it already exists");
+            throw new ProjectAlreadyExistsException("Can not create project " + project.getName() + " because it already exists");
         }
         // Ensure the name is URL friendly
-        if(!isNameLegalForURL(name)){
-            throw new IllegalNameException("Invalid project name. Not URL friendly:"+name);
+        if(!isNameLegalForURL(project.getName())){
+            throw new IllegalNameException("Invalid project name. Not URL friendly:"+project.getName());
         }
-
-        Project p = new Project();
-        p.setName(name);
-        p.setDisplayName(displayName);
-        p.setDescription(description);
-        entityManager.persist(p);
-        return p;
+    
+        entityManager.persist(project);
+        return project;
     }
 
     /**

@@ -56,11 +56,8 @@ public class ProjectResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createProject(JsonObject jsonObject) throws ProjectAlreadyExistsException, IllegalNameException{
-        String name = jsonObject.getString("name");
-        String displayName = jsonObject.getString("displayName");
-        String description = jsonObject.getString("description");
-        Project project = projectController.createProject(name, displayName, description);
+    public Response createProject(Project project) throws ProjectAlreadyExistsException, IllegalNameException{
+        project = projectController.createProject(project);
         return Response.status(Status.CREATED).entity(project).type(RESTConfiguration.OBJECT_JSON).build();
     }
     
@@ -75,11 +72,9 @@ public class ProjectResource {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("{projectName}")
-    public Response modifyProject(@Context UriInfo uriInfo, @PathParam("projectName") String projectName, JsonObject jsonObject) 
+    public Response modifyProject(@Context UriInfo uriInfo, @PathParam("projectName") String projectName, Project project) 
             throws ProjectNotFoundException, ForbiddenException {
-        String displayName = jsonObject.getString("displayName");
-        String description = jsonObject.getString("description");
-        projectController.modifyProject(projectName, displayName, description);
+        projectController.modifyProject(projectName, project.getDisplayName(), project.getDescription());
         return Response.status(Status.NO_CONTENT).build();
     }
     
